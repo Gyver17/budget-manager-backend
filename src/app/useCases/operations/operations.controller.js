@@ -1,33 +1,44 @@
 import servicesPort from "./ports/services.port";
+import { v4 } from "uuid";
 
 class operationsController {
-	constructor(port) {
-		this.port = port;
-	}
+  constructor(port) {
+    this.port = port;
+  }
 
-	operations() {
-		return this.port.operations();
-	}
+  async operations() {
+    const data = await this.port.operations();
+    return { status: 200, json: data };
+  }
 
-	operationById() {
-		return this.port.operationById();
-	}
+  async operationById(id) {
+    const data = await this.port.operationById(id);
+    if (data === undefined) {
+      return { status: 200, json: [] };
+    }
+    return { status: 200, json: data };
+  }
 
-	operationsByType() {
-		return this.port.operationsByType();
-	}
+  async operationsByType(type) {
+    const data = await this.port.operationsByType(type);
+    return { status: 200, json: data };
+  }
 
-	createOperation() {
-		return this.port.createOperation();
-	}
+  async createOperation(data) {
+    const id = v4();
+    await this.port.createOperation({ id, ...data });
+    return { status: 200, json: { message: "succes" } };
+  }
 
-	updateOperation() {
-		return this.port.updateOperation();
-	}
+  async updateOperation(id, data) {
+    await this.port.updateOperation(id, data);
+    return { status: 200, json: { message: "succes" } };
+  }
 
-	deleteOperation() {
-		return this.port.deleteOperation();
-	}
+  async deleteOperation(id) {
+    await this.port.deleteOperation(id);
+    return { status: 200, json: { message: "succes" } };
+  }
 }
 
 const controllers = new operationsController(servicesPort);

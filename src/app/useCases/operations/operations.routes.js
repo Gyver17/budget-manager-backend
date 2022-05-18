@@ -1,42 +1,66 @@
 import { Router } from "express";
-import controllerPort from './ports/controller.port'
+import verifyToken from "../../utils/verifyToken.util";
+import controllerPort from "./ports/controller.port";
+import validateCreate from "./validations/createOperation.validation";
+import validateUpdate from "./validations/updateOperation.validation";
+import validateId from "../../utils/validateIdParameter.util";
 
 class usersRoutes {
-	constructor(port) {
-        this.port = port
-    };
+  constructor(port) {
+    this.port = port;
+  }
 
-	init() {
-		const router = Router();
+  init() {
+    const router = Router();
 
-		router.get("/api/v1/operations", (req, res) => {
-			res.send(this.port.operations());
-		});
+    router.get("/api/v1/operations", verifyToken, (req, res) => {
+      this.port.operations(req, res);
+    });
 
-		router.get("/api/v1/operations/:id", (req, res) => {
-			res.send(this.port.operationById());
-		});
+    router.get(
+      "/api/v1/operations/:id",
+      verifyToken,
+      validateId,
+      (req, res) => {
+        this.port.operationById(req, res);
+      }
+    );
 
-		router.get("/api/v1/type/operations/:id", (req, res) => {
-			res.send(this.port.operationsByType());
-		});
+    router.get("/api/v1/type/operations/:type", verifyToken, (req, res) => {
+      this.port.operationsByType(req, res);
+    });
 
-		router.post("/api/v1/operations", (req, res) => {
-			res.send(this.port.createOperation());
-		});
+    router.post(
+      "/api/v1/operations",
+      verifyToken,
+      validateCreate,
+      (req, res) => {
+        this.port.createOperation(req, res);
+      }
+    );
 
-		router.put("/api/v1/operations/:id", (req, res) => {
-			res.send(this.port.updateOperation());
-		});
+    router.put(
+      "/api/v1/operations/:id",
+      verifyToken,
+      validateId,
+      validateUpdate,
+      (req, res) => {
+        this.port.updateOperation(req, res);
+      }
+    );
 
-		router.delete("/api/v1/operations/:id", (req, res) => {
-			res.send(this.port.deleteOperation());
-		});
+    router.delete(
+      "/api/v1/operations/:id",
+      verifyToken,
+      validateId,
+      (req, res) => {
+        this.port.deleteOperation(req, res);
+      }
+    );
 
-		return router;
-	}
+    return router;
+  }
 }
 
-const routes = new usersRoutes(controllerPort)
-export default routes.init()
-
+const routes = new usersRoutes(controllerPort);
+export default routes.init();

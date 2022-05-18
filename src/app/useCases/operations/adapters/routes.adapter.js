@@ -1,13 +1,14 @@
-function response(res, status, json) {
-	return res.status(status).json(json);
+export default class routesAdapter {
+	response(res, status, json) {
+		res.status(status).json(json);
+	}
+
+	params(req) {
+		return req.params;
+	}
+
+	body(req) {
+		return req.body;
+	}
 }
 
-function params(req) {
-	return req.params;
-}
-
-function body(req) {
-	return req.body;
-}
-
-export { response, params, body };

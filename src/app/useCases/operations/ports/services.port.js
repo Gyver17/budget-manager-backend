@@ -1,35 +1,45 @@
 import operationsServices from "../operations.services";
+import servicesAdapter from "../adapters/services.adapter";
 
 class servicesPort {
-	constructor(services) {
-		this.services = services;
-	}
+  constructor(services, adapter) {
+    this.services = services;
+    this.adapter = adapter;
+  }
 
-	operations() {
-		return this.services.get();
-	}
+  async operations() {
+    const operations = await this.services.get();
+    return this.adapter.adapterGet(operations);
+  }
 
-	operationById() {
-		return this.services.getById();
-	}
+  async operationById(id) {
+    const operation = await this.services.getById(id);
+    if (operation === undefined) {
+      return undefined;
+    }
+    return this.adapter.adapterGetById(operation);
+  }
 
-	operationsByType(){
-		return this.services.getByType()
-	}
+  async operationsByType(type) {
+    const operations = await this.services.getByType(type);
+    return this.adapter.adapterGetByType(operations);
+  }
 
-	createOperation(){
-		return this.services.create()
-	}
+  async createOperation(data) {
+    const newData = this.adapter.adapterCreate(data);
+    return await this.services.create(newData);
+  }
 
-	updateOperation(){
-		return this.services.update()
-	}
+  async updateOperation(id, data) {
+    const newData = this.adapter.adapterUpdate(id, data);
+    return await this.services.update(newData);
+  }
 
-	deleteOperation(){
-		return this.services.delete()
-	}
+  async deleteOperation(id) {
+    return await this.services.delete(id);
+  }
 }
 
-const port = new servicesPort(new operationsServices());
+const port = new servicesPort(new operationsServices(), new servicesAdapter());
 
 export default port;

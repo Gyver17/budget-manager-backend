@@ -1,5 +1,5 @@
 import servicesPort from "./ports/services.port";
-import { encryptPassword, matchPassword } from "../../utils/bcrypt";
+import { encryptPassword, matchPassword } from "../../utils/bcrypt.util";
 import { v4 } from "uuid";
 import jwt from "jsonwebtoken";
 
