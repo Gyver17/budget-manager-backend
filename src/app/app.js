@@ -2,9 +2,9 @@ import express from "express";
 import morgan from "morgan";
 
 // Import Routes
-import users from './useCases/users/users.routes'
-import operations from './useCases/operations/operations.routes'
-import category from './useCases/category/category.routes'
+import users from "./useCases/users/users.routes";
+import operations from "./useCases/operations/operations.routes";
+import category from "./useCases/category/category.routes";
 
 // Create Express server
 const app = express();
@@ -16,8 +16,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use(users)
-app.use(operations)
-app.use(category)
+app.use(users);
+app.use(operations);
+app.use(category);
 
 export default app;

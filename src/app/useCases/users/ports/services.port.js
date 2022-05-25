@@ -1,7 +1,7 @@
 import usersServices from "../users.services";
-import servicesAdapter from "../adapters/services.adapter"
+import servicesAdapter from "../adapters/services.adapter";
 
-class servicesPort{
+class servicesPort {
 	constructor(services, adapter) {
 		this.services = services;
 		this.adapter = adapter;
@@ -9,43 +9,43 @@ class servicesPort{
 
 	async verifyEmail(email) {
 		const user = await this.services.getByEmail(email);
-		if(user === undefined) {
-			return undefined
+		if (user === undefined) {
+			return undefined;
 		}
-		return await this.adapter.dataUser(user)
+		return await this.adapter.dataUser(user);
 	}
 
 	async signToken(data) {
-		const session = this.adapter.signToken(data)
-		return await this.services.updateSessionById(session)
+		const session = this.adapter.signToken(data);
+		return await this.services.updateSessionById(session);
 	}
 
 	async createUser(data) {
-		const { user, session } = this.adapter.createUser(data)
+		const { user, session } = this.adapter.createUser(data);
 		return await this.services.create(user, session);
 	}
 
-	updateCode(data) {
-		const adapterData = this.adapter.updateCode(data) 
-		return this.services.updateCode(adapterData);
+	async updateCode(data) {
+		const adapterData = this.adapter.updateCode(data);
+		return await this.services.updateCode(adapterData);
 	}
 
-	verifyCode(id) {
-		const user = this.services.getById(id);
-		if(user === undefined) {
-			return undefined
+	async getUserById(id) {
+		const user = await this.services.getById(id);
+		if (user === undefined) {
+			return undefined;
 		}
-		return this.adapter.dataUser(user)
+		return this.adapter.dataUser(user);
 	}
 
-	updatePassword(data) {
-		const adapterData = this.adapter.updatePassword(data) 
-		return this.services.updatePassword(adapterData);
+	async updatePassword(data) {
+		const adapterData = this.adapter.updatePassword(data);
+		return await this.services.updatePassword(adapterData);
 	}
 
-	updateUser(data) {
-		const adapterData = this.adapter.updateUser(data) 
-		return this.services.update(adapterData);
+	async updateUser(id, data) {
+		const adapterData = this.adapter.updateUser(id, data);
+		return await this.services.update(adapterData);
 	}
 }
 

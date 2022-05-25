@@ -1,5 +1,6 @@
 import usersController from "../users.controller";
 import routesAdapter from "../adapters/routes.adapter";
+import { responseError } from "../../../utils/handleError.util";
 
 class controllerPort {
 	constructor(controller, adapter) {
@@ -8,31 +9,70 @@ class controllerPort {
 	}
 
 	async signIn(req, res) {
-		const body = this.adapter.body(req);
-		const { status, json } = await this.controller.verifyUser(body);
-		this.adapter.response(res, status, json);
+		try {
+			const body = this.adapter.body(req);
+			const { status, json } = await this.controller.verifyUser(body);
+			this.adapter.response(res, status, json);
+		} catch (error) {
+			responseError(res, error);
+		}
 	}
 
 	async signUp(req, res) {
-		const body = this.adapter.body(req);
-		const { status, json } = await this.controller.createUser(body);
-		this.adapter.response(res, status, json);
+		try {
+			const body = this.adapter.body(req);
+			const { status, json } = await this.controller.createUser(body);
+			this.adapter.response(res, status, json);
+		} catch (error) {
+			responseError(res, error);
+		}
 	}
 
-	forgotPassword(req, res) {
-		return this.controller.sendCode();
+	async forgotPassword(req, res) {
+		try {
+			const { email } = this.adapter.body(req);
+			const { status, json } = await this.controller.sendCode(email);
+			this.adapter.response(res, status, json);
+		} catch (error) {
+			responseError(res, error);
+		}
 	}
 
-	authorizeChangedPassword(req, res) {
-		return this.controller.verifyCode();
+	async authorizeChangedPassword(req, res) {
+		try {
+			const { id } = this.adapter.params(req);
+			const { code } = this.adapter.body(req);
+			const { status, json } = await this.controller.verifyCode(id, code);
+			this.adapter.response(res, status, json);
+		} catch (error) {
+			responseError(res, error);
+		}
 	}
 
-	updatePassword(req, res) {
-		return this.controller.updatePassword();
+	async updatePassword(req, res, next, token) {
+		try {
+			const { id } = this.adapter.params(req);
+			const { password } = this.adapter.body(req);
+			const { status, json } = await this.controller.updatePassword(
+				id,
+				password,
+				token
+			);
+			this.adapter.response(res, status, json);
+		} catch (error) {
+			responseError(res, error);
+		}
 	}
 
-	updateUser(req, res) {
-		return this.controller.updateUser();
+	async updateUser(req, res) {
+		try {
+			const { id } = this.adapter.params(req);
+			const body = this.adapter.body(req);
+			const { status, json } = await this.controller.updateUser(id, body);
+			this.adapter.response(res, status, json);
+		} catch (error) {
+			responseError(res, error);
+		}
 	}
 }
 

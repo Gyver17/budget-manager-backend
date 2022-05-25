@@ -1,7 +1,14 @@
-import servicesPort from "./ports/services.port";
-import { encryptPassword, matchPassword } from "../../utils/bcrypt.util";
-import { v4 } from "uuid";
+/* ---- Library Imports ---- */
 import jwt from "jsonwebtoken";
+import { v4 } from "uuid";
+
+/* ---- Components Imports ---- */
+import servicesPort from "./ports/services.port";
+
+/* ---- Utils Imports ---- */
+import { encryptPassword, matchPassword } from "../../utils/bcrypt.util";
+import mailer from "../../utils/mailer.util";
+import { controllerError } from "../../utils/handleError.util";
 
 class usersController {
 	constructor(port) {
@@ -18,9 +25,9 @@ class usersController {
 				json: { message: "44754" },
 			};
 		}
-	
+
 		const validPassword = await matchPassword(password, user.password);
-		
+
 		if (!validPassword) {
 			return {
 				status: 404,
@@ -69,20 +76,107 @@ class usersController {
 		};
 	}
 
-	sendCode() {
-		return this.port.updateCode();
+	async sendCode(email) {
+		const user = await this.port.verifyEmail(email);
+
+		if (user === undefined) {
+			return {
+				status: 404,
+				json: { message: "44754" },
+			};
+		}
+
+		const uuid = v4().split("-");
+		const code = `${uuid[1]}-${uuid[3]}`;
+
+		await this.port.updateCode({ code, id: user.id });
+
+		const html = `
+    <html
+        style="
+          margin: 0;
+          padding: 0;
+          height: 100vh;
+          width: 100vw;
+          background-color: #fefefe;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+          "
+        >
+          <b style="font-size: 15px; font-style: italic; padding: 10px">
+            Con este codigo puede restablecer su contraseña: ${code}
+          </b>
+        </div>
+      </html>
+    `;
+
+		const info = await mailer(email, "Restablecer Contraseña", html);
+
+		console.log("Message sent: %s", info.messageId);
+
+		return {
+			status: 200,
+			json: { id: user.id },
+		};
 	}
 
-	verifyCode() {
-		return this.port.verifyCode();
+	async verifyCode(id, code) {
+		const user = await this.port.getUserById(id);
+		if (user?.code !== code || user === undefined) {
+			return {
+				status: 404,
+				json: { message: "44754" },
+			};
+		}
+
+		const token = jwt.sign({ id: user.id }, code, { expiresIn: 60 * 5 });
+
+		return {
+			status: 200,
+			json: { token },
+		};
 	}
 
-	updatePassword() {
-		return this.port.updatePassword();
+	async updatePassword(id, password, token) {
+		const user = await this.port.getUserById(id);
+		if (user === undefined) {
+			return {
+				status: 404,
+				json: { message: "44754" },
+			};
+		}
+
+		await jwt.verify(token, user.code, (error) => {
+			if (error) {
+				throw new controllerError("invalidToken", 403, 43292);
+			}
+		});
+
+		const newPassword = await encryptPassword(password);
+
+		await this.port.updatePassword({ id: user.id, password: newPassword });
+
+		return {
+			status: 200,
+			json: { message: "success" },
+		};
 	}
 
-	updateUser() {
-		return this.port.updateUser();
+	async updateUser(id, data) {
+		await this.port.updateUser(id, data);
+
+		return {
+			status: 200,
+			json: { message: "success" },
+		};
 	}
 }
 

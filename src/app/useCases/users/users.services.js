@@ -1,20 +1,29 @@
 import pool from "../../../const/database";
+import { dbError } from "../../utils/handleError.util";
 
 export default class usersServices {
 	async getByEmail(email) {
-		const response = await pool.query(
-			`select * from user_account where email_user_account=$1`,
-			[email]
-		);
-		return response.rows[0];
+		try {
+			const response = await pool.query(
+				`select * from user_account where email_user_account=$1`,
+				[email]
+			);
+			return response.rows[0];
+		} catch (error) {
+			throw new dbError(error);
+		}
 	}
 
 	async getById(id) {
-		const response = await pool.query(
-			`select * from user_account where id=$1`,
-			[id]
-		);
-		return response.rows[0];
+		try {
+			const response = await pool.query(
+				`select * from user_account where id=$1`,
+				[id]
+			);
+			return response.rows[0];
+		} catch (error) {
+			throw new dbError(error);
+		}
 	}
 
 	async create(user, session) {
@@ -31,43 +40,59 @@ export default class usersServices {
 				session
 			);
 			return true;
-		} catch (e) {
-			console.log(e);
+		} catch (error) {
+			throw new dbError(error);
 		}
 	}
 
 	async updateSessionById(data) {
-		await pool.query(
-			`update session set secret_key_session=$1 where id_user_account_session=$2`,
-			data
-		);
+		try {
+			await pool.query(
+				`update session set secret_key_session=$1 where id_user_account_session=$2`,
+				data
+			);
+			return true;
+		} catch (error) {
+			throw new dbError(error);
+		}
 	}
 
 	async update(data) {
-		await pool.query(
-			`update user_account set 
-			name_user_account=$1, 
-			email_user_account=$2, 
-			password_user_account=$3 
-			where id=$4`,
-			data
-		);
-		return true;
+		try {
+			await pool.query(
+				`update user_account set 
+				name_user_account=$1, 
+				email_user_account=$2 
+				where id=$3`,
+				data
+			);
+			return true;
+		} catch (error) {
+			throw new dbError(error);
+		}
 	}
 
 	async updatePassword(data) {
-		await pool.query(
-			`update user_account set password_user_account=$1 where id=$2`,
-			data
-		);
-		return true;
+		try {
+			await pool.query(
+				`update user_account set password_user_account=$1 where id=$2`,
+				data
+			);
+			return true;
+		} catch (error) {
+			throw new dbError(error);
+		}
 	}
 
 	async updateCode(data) {
-		await pool.query(
-			`update user_account set code_update_password_user_account=$1 where id=$2`,
-			data
-		);
-		return true;
+		try {
+			await pool.query(
+				`update user_account set code_update_password_user_account=$1 where id=$2`,
+				data
+			);
+			return true;
+		} catch (error) {
+			throw new dbError(error);
+		}
 	}
 }
