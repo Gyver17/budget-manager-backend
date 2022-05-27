@@ -41,7 +41,6 @@ class usersRoutes {
 			validateId,
 			authorizechangedValidation,
 			(req, res) => {
-				console.log("Hola");
 				this.port.authorizeChangedPassword(req, res);
 			}
 		);

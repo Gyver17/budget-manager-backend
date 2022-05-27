@@ -1,5 +1,7 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
+import config from "../const/config";
 
 // Import Routes
 import users from "./useCases/users/users.routes";
@@ -12,6 +14,7 @@ const app = express();
 // Express configuration
 app.set("port", process.env.PORT || 3000);
 app.use(morgan("dev"));
+app.use(cors(config.settingCors));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

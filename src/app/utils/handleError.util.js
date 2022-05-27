@@ -5,14 +5,14 @@ export function responseError(res, error) {
 	}
 	if (error instanceof dbError) {
 		if (error.code === "23505") {
-			return res.status(500).json({ code: 50261 });
+			return res.status(500).json({ code: "50261" });
 		}
 		if (error.code === "23503") {
-			return res.status(500).json({ code: 50857 });
+			return res.status(500).json({ code: "50857" });
 		}
 		return res.status(500).json({ code: "50115" });
 	}
-	return res.status(500).json({ code: 50500 });
+	return res.status(500).json({ code: "50500" });
 }
 
 export class controllerError extends Error {
