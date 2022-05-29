@@ -2,9 +2,25 @@ import pool from "../../../const/database";
 import { dbError } from "../../utils/handleError.util";
 
 export default class operationsServices {
-	async get() {
+	async get(userId) {
 		try {
-			const response = await pool.query(`select * from operation`);
+			const response = await pool.query(
+				`select 
+				operation.id as id,
+				operation.id_user_account_operation as id_user,
+				operation.id_category_operation as id_category,
+				category.name_category as category,
+				operation.concept_operation as concept,
+				operation.amount_operation as amount,
+				operation.type_operation as type,
+				to_char( operation.date_operation, 'YYYY-MM-DD') as date
+				from operation 
+				inner join category on 
+				operation.id_category_operation=category.id 
+				where operation.id_user_account_operation =$1
+				order by date desc`,
+				[userId]
+			);
 			return response.rows;
 		} catch (error) {
 			throw new dbError(error);

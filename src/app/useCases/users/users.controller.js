@@ -178,6 +178,15 @@ class usersController {
 			json: { message: "success" },
 		};
 	}
+
+	async closeSession(id) {
+		await this.port.signToken({ secretKey: "", id: id });
+
+		return {
+			status: 200,
+			json: { message: "success" },
+		};
+	}
 }
 
 const controllers = new usersController(servicesPort);

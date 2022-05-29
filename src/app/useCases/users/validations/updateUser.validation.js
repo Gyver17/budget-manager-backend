@@ -7,11 +7,12 @@ const validation = [
 		.exists()
 		.notEmpty()
 		.custom((value) => {
-			if (!expressions.categoryName.test(value)) {
+			if (!expressions.name.test(value)) {
 				throw new Error("Invalid Value");
 			}
 			return true;
 		}),
+	check("email").exists().isEmail().notEmpty(),
 	(req, res, next) => {
 		validationResult(req, res, next);
 	},

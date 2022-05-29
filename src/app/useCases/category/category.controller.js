@@ -6,8 +6,8 @@ class usersController {
 		this.port = port;
 	}
 
-	async category() {
-		const data = await this.port.category();
+	async category(userId) {
+		const data = await this.port.category(userId);
 		return { status: 200, json: data };
 	}
 
@@ -19,10 +19,10 @@ class usersController {
 		return { status: 200, json: data };
 	}
 
-	async createCategory(data) {
+	async createCategory(data, userId) {
 		const id = v4();
 		const { name } = data;
-		await this.port.createCategory({ id, name });
+		await this.port.createCategory({ id, name, userId });
 		return { status: 200, json: { message: "success" } };
 	}
 

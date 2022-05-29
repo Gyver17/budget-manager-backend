@@ -74,6 +74,16 @@ class controllerPort {
 			responseError(res, error);
 		}
 	}
+
+	async closeSession(req, res) {
+		try {
+			const { id } = this.adapter.params(req);
+			const { status, json } = await this.controller.closeSession(id);
+			this.adapter.response(res, status, json);
+		} catch (error) {
+			responseError(res, error);
+		}
+	}
 }
 
 const port = new controllerPort(usersController, new routesAdapter());

@@ -9,7 +9,7 @@ CREATE TABLE "user_account" (
 CREATE TABLE "session" (
   "id" varchar PRIMARY KEY,
   "id_user_account_session" varchar UNIQUE NOT NULL,
-  "secret_key_session" varchar NOT NULL
+  "secret_key_session" varchar
 );
 
 CREATE TABLE "operation" (
@@ -24,11 +24,14 @@ CREATE TABLE "operation" (
 
 CREATE TABLE "category" (
   "id" varchar PRIMARY KEY,
-  "name_category" varchar NOT NULL
+  "name_category" varchar NOT NULL,
+  "id_user_account_category" varchar NOT NULL
 );
 
 ALTER TABLE "session" ADD FOREIGN KEY ("id_user_account_session") REFERENCES "user_account" ("id");
 
 ALTER TABLE "operation" ADD FOREIGN KEY ("id_user_account_operation") REFERENCES "user_account" ("id");
+
+ALTER TABLE "category" ADD FOREIGN KEY ("id_user_account_category") REFERENCES "user_account" ("id");
 
 ALTER TABLE "operation" ADD FOREIGN KEY ("id_category_operation") REFERENCES "category" ("id");

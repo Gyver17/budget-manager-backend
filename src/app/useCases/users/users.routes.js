@@ -9,6 +9,7 @@ import {
 	updatePasswordValidation,
 } from "./validations/updatePassword.validation";
 import validateId from "../../utils/validateIdParameter.util";
+import updateUserValidation from "./validations/updateUser.validation";
 
 class usersRoutes {
 	constructor(port) {
@@ -65,8 +66,19 @@ class usersRoutes {
 			"/api/v1/updateuser/:id",
 			verifyToken,
 			validateId,
+			updateUserValidation,
 			(req, res) => {
 				this.port.updateUser(req, res);
+			}
+		);
+
+		router.put(
+			"/api/v1/closesession/:id",
+			verifyToken,
+			validateId,
+
+			(req, res) => {
+				this.port.closeSession(req, res);
 			}
 		);
 

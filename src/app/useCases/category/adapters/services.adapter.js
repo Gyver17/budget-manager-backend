@@ -4,6 +4,8 @@ export default class servicesAdapter {
 			return {
 				id: category.id,
 				name: category.name_category,
+				userId: category.id_user_account_category,
+				associated: category.associated,
 			};
 		});
 		return data;
@@ -17,7 +19,7 @@ export default class servicesAdapter {
 	}
 
 	adapterCreate(data) {
-		return [data.id, data.name];
+		return [data.id, data.name, data.userId];
 	}
 
 	adapterUpdate(id, data) {

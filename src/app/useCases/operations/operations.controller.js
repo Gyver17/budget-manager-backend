@@ -6,9 +6,19 @@ class operationsController {
 		this.port = port;
 	}
 
-	async operations() {
-		const data = await this.port.operations();
+	async operations(userId) {
+		const data = await this.port.operations(userId);
 		return { status: 200, json: data };
+	}
+
+	async operationsHomeValue(userId) {
+		const data = await this.port.operations(userId);
+		const balance = data.reduce(
+			(prev, next) => prev + (next["amount"] || 0),
+			0
+		);
+		const lastOperations = data.slice(0, 10);
+		return { status: 200, json: { balance, lastOperations } };
 	}
 
 	async operationById(id) {

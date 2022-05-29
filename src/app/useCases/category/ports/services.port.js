@@ -7,15 +7,15 @@ class servicesPort {
 		this.adapter = adapter;
 	}
 
-	async category() {
-		const categories = await this.services.get();
+	async category(userId) {
+		const categories = await this.services.get(userId);
 		return this.adapter.adapterGet(categories);
 	}
 
 	async categoryById(id) {
 		const category = await this.services.getById(id);
-		if(category === undefined) {
-			return undefined
+		if (category === undefined) {
+			return undefined;
 		}
 		return this.adapter.adapterGetById(category);
 	}

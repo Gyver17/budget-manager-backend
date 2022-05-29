@@ -11,4 +11,3 @@ export default class routesAdapter {
 		return req.body;
 	}
 }
-
