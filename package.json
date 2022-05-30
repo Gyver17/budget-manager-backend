@@ -8,7 +8,7 @@
 	"description": "",
 	"main": "server.js",
 	"scripts": {
-		"build": "babel src/server.js -d dist",
+		"build": "cross-env NODE_ENV=production babel src/server.js -d dist",
 		"start": "cross-env NODE_ENV=production babel-node src/server.js",
 		"dev": "cross-env NODE_ENV=development nodemon --exec babel-node src/server.js"
 	},
